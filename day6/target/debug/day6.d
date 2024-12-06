@@ -1,0 +1,1 @@
+/Users/alwaysandy/Code/Projects/aoc2024/day6/target/debug/day6: /Users/alwaysandy/Code/Projects/aoc2024/day6/src/main.rs /Users/alwaysandy/Code/Projects/aoc2024/day6/src/part_one.rs /Users/alwaysandy/Code/Projects/aoc2024/parse_file/src/lib.rs
