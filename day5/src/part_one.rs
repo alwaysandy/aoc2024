@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 pub fn solve_part_one(input: &[String]) -> usize {
     let rule_split_index = input.iter().position(|s| s.is_empty()).unwrap();
     let rules: HashMap<_, _> = input[0..rule_split_index]
