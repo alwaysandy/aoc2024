@@ -1,3 +1,5 @@
+mod part_one;
+
 use parse_file::parse_file;
 use std::collections::{HashMap, HashSet};
 
