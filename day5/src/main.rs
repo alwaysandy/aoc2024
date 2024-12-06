@@ -108,6 +108,6 @@ fn solve_part_two(input: &[String]) -> usize {
     answer
 }
 
-fn sort_page(page: Vec<usize>, rules: &HashMap<usize, HashSet<usize>>) {
-
-}
+// fn sort_page(page: Vec<usize>, rules: &HashMap<usize, HashSet<usize>>) {
+//
+// }
