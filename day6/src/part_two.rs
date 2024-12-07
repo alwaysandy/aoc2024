@@ -47,7 +47,7 @@ pub fn solve_part_two(input: &[String]) -> usize {
             return acc;
         }
 
-        if check_if_looping(
+        if is_looping(
             &input_arrays,
             &start_position,
             &mut HashSet::new(),
@@ -103,7 +103,7 @@ fn find_path(
     find_path(map, &next_position, visited, direction)
 }
 
-fn check_if_looping(
+fn is_looping(
     map: &Vec<Vec<char>>,
     position: &XY,
     obstructions_seen: &mut HashSet<(XY, Direction)>,
@@ -125,7 +125,7 @@ fn check_if_looping(
         }
 
         obstructions_seen.insert((next_position.clone(), direction.clone()));
-        return check_if_looping(
+        return is_looping(
             map,
             position,
             obstructions_seen,
@@ -134,7 +134,7 @@ fn check_if_looping(
         );
     }
 
-    check_if_looping(
+    is_looping(
         map,
         &next_position,
         obstructions_seen,
