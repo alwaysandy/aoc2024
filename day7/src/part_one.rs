@@ -45,6 +45,6 @@ fn is_valid(
         operands,
         current_index + 1,
         current_val * operands[current_index + 1],
-        final_val,
+        final_val
     )
 }

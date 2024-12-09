@@ -48,5 +48,5 @@ pub fn get_full_file(filename: &str) -> String {
         Ok(_) => println!("OKAY"),
     };
 
-    contents
+    contents.trim().to_string()
 }
