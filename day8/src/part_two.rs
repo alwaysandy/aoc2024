@@ -14,13 +14,13 @@ enum Direction {
     DownLeft,
 }
 
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 struct XY {
     x: i32,
     y: i32,
 }
 
-pub fn solve_part_one(input: &[String]) -> usize {
+pub fn solve_part_two(input: &[String]) -> usize {
     let char_array: Vec<Vec<char>> = input.iter().map(|line| line.chars().collect()).collect();
     let antennas: HashMap<char, Vec<XY>> =
         char_array
@@ -43,15 +43,17 @@ pub fn solve_part_one(input: &[String]) -> usize {
     let antinodes: HashSet<XY> = antennas.iter().fold(HashSet::new(), |mut acc, (c, line)| {
         line.iter().combinations(2).for_each(|comb| {
             let directions = get_directions(comb[0], comb[1]);
-            let antinode_a = get_antinode(input, comb[0], comb[1], &directions.0);
-            if let Some(antinode) = antinode_a {
-                acc.insert(antinode);
-            }
+            get_antinodes(input, comb[0], comb[1], &directions.0, Vec::new())
+                .into_iter()
+                .for_each(|antinode| {
+                    acc.insert(antinode);
+                });
 
-            let antinode_b = get_antinode(input, comb[1], comb[0], &directions.1);
-            if let Some(antinode) = antinode_b {
-                acc.insert(antinode);
-            }
+            get_antinodes(input, comb[1], comb[0], &directions.1, Vec::new())
+                .into_iter()
+                .for_each(|antinode| {
+                    acc.insert(antinode);
+                });
         });
 
         acc
@@ -101,20 +103,34 @@ fn get_change(direction: &Direction) -> [i32; 2] {
     }
 }
 
-fn get_antinode(input: &[String], a: &XY, b: &XY, direction: &Direction) -> Option<XY> {
+fn get_antinodes(
+    input: &[String],
+    a: &XY,
+    b: &XY,
+    direction: &Direction,
+    mut antinodes: Vec<XY>,
+) -> Vec<XY> {
+    antinodes.push(a.clone());
+    antinodes.push(b.clone());
     let x_difference = (a.x - b.x).abs();
     let y_difference = (a.y - b.y).abs();
     let change = get_change(direction);
     let x_change = change[0] * x_difference;
     let y_change = change[1] * y_difference;
     if a.x + x_change < 0 || a.x + x_difference >= input[0].len() as i32 {
-        None
+        antinodes
     } else if a.y + y_change < 0 || a.y + y_difference >= input.len() as i32 {
-        None
+        antinodes
     } else {
-        Some(XY {
-            x: a.x + x_change,
-            y: a.y + y_change,
-        })
+        get_antinodes(
+            input,
+            &XY {
+                x: a.x + x_change,
+                y: a.y + y_change,
+            },
+            a,
+            direction,
+            antinodes,
+        )
     }
 }
