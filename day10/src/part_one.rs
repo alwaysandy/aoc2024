@@ -29,14 +29,15 @@ pub fn solve_part_one(input: &[String]) -> usize {
     })
 }
 
-fn check_path(map: &[Vec<usize>], pos: XY, elevation: usize, mut paths_found: HashSet<XY>) -> HashSet<XY> {
+fn check_path(map: &[Vec<usize>], pos: XY, elevation: usize, paths_found: HashSet<XY>) -> HashSet<XY> {
     if elevation == 9 {
-        paths_found.insert(pos);
-        return paths_found;
+        let mut to_return = paths_found.clone();
+        to_return.insert(pos);
+        return to_return;
     }
 
     let directions = [Direction::Up, Direction::Right, Direction::Down, Direction::Left];
-    directions.iter().fold(paths_found, |mut acc, d| {
+    directions.iter().fold(paths_found, |acc, d| {
         let change = direction_to_coordinates(d);
         let next_pos = XY { x: pos.x + change[0], y: pos.y + change[1]};
         if next_pos.x < 0 || next_pos.x >= map[0].len() as i32 {
@@ -48,8 +49,7 @@ fn check_path(map: &[Vec<usize>], pos: XY, elevation: usize, mut paths_found: Ha
         }
 
         if map[next_pos.y as usize][next_pos.x as usize] == elevation + 1 {
-            acc = check_path(map, next_pos, elevation + 1, acc);
-            acc
+            check_path(map, next_pos, elevation + 1, acc)
         } else {
             acc
         }
