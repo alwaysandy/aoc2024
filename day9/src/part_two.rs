@@ -27,7 +27,6 @@ pub fn solve_part_two(input: &str) -> usize {
     });
 
     compact_files(&mut files);
-    // println!("{:?}", files_to_vec(&files));
     calculate_checksum(&files)
 }
 
