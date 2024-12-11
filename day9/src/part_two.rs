@@ -8,29 +8,37 @@ struct Block {
 }
 
 pub fn solve_part_two(input: &str) -> usize {
-    let input_chars: Vec<usize> = input.chars().map(|c| c.to_digit(10).unwrap() as usize).collect();
-    let mut files: Vec<Block> = input_chars.windows(2).step_by(2).enumerate().map(|(id, cs)| {
-        return Block {
-            id,
-            size: cs[0],
-            original_size: cs[0],
-            free_blocks: Vec::new(),
-            free_blocks_left: cs[1],
-        }
-    }).collect();
-    files.push(Block{
+    let input_chars: Vec<usize> = input
+        .chars()
+        .map(|c| c.to_digit(10).unwrap() as usize)
+        .collect();
+    let mut files: Vec<Block> = input_chars
+        .windows(2)
+        .step_by(2)
+        .enumerate()
+        .map(|(id, cs)| {
+            return Block {
+                id,
+                size: cs[0],
+                original_size: cs[0],
+                free_blocks: Vec::new(),
+                free_blocks_left: cs[1],
+            };
+        })
+        .collect();
+    files.push(Block {
         id: files[files.len() - 1].id + 1,
         size: input_chars[input_chars.len() - 1],
         original_size: input_chars[input_chars.len() - 1],
         free_blocks: Vec::new(),
-        free_blocks_left: 0
+        free_blocks_left: 0,
     });
 
     compact_files(&mut files);
     calculate_checksum(&files)
 }
 
-fn compact_files(files: &mut Vec<Block>){
+fn compact_files(files: &mut Vec<Block>) {
     let mut current_block = files.len() - 1;
     loop {
         if current_block == 0 {
@@ -41,7 +49,7 @@ fn compact_files(files: &mut Vec<Block>){
         let id = files[current_block].id;
         for i in 0..current_block {
             if files[i].free_blocks_left < size_needed {
-                continue
+                continue;
             }
 
             files[current_block].size = 0;
@@ -50,7 +58,7 @@ fn compact_files(files: &mut Vec<Block>){
             }
 
             files[i].free_blocks_left -= size_needed;
-            break
+            break;
         }
 
         current_block -= 1;
