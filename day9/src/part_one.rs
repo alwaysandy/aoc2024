@@ -25,7 +25,7 @@ pub fn solve_part_one(input: &str) -> usize {
 
     compact_files(&mut files);
 
-    return calculate_checksum(&files);
+    calculate_checksum(&files)
 }
 
 fn compact_files(files: &mut Vec<Block>){
