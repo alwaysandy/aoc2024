@@ -50,7 +50,6 @@ pub fn solve_part_two(input: &[Vec<char>]) -> usize {
             // acc + region.len() * find_perimeter(input, region)
             println!("{}", find_corners(input, region) / 2);
             acc + (find_corners(input, region) / 2) * region.len()
-
         })
     })
 }
@@ -109,20 +108,31 @@ fn find_perimeter(input: &[Vec<char>], region: &HashSet<RegionNode>) -> usize {
 }
 
 fn find_edges(input: &[Vec<char>], region: &HashSet<RegionNode>) -> HashSet<Edge> {
-    let directions = [Direction::Up, Direction::Right, Direction::Down, Direction::Left];
-    let edges: HashSet<Edge> = region.iter().flat_map(|node| {
-        directions.iter().filter_map(|direction| {
-            if is_valid_change(input, node, direction).is_none() {
-                Some(Edge {
-                    direction: direction.clone(),
-                    x: node.x,
-                    y: node.y
+    let directions = [
+        Direction::Up,
+        Direction::Right,
+        Direction::Down,
+        Direction::Left,
+    ];
+    let edges: HashSet<Edge> = region
+        .iter()
+        .flat_map(|node| {
+            directions
+                .iter()
+                .filter_map(|direction| {
+                    if is_valid_change(input, node, direction).is_none() {
+                        Some(Edge {
+                            direction: direction.clone(),
+                            x: node.x,
+                            y: node.y,
+                        })
+                    } else {
+                        None
+                    }
                 })
-            } else {
-                None
-            }
-        }).collect::<Vec<Edge>>()
-    }).collect();
+                .collect::<Vec<Edge>>()
+        })
+        .collect();
 
     edges
 }
@@ -130,20 +140,22 @@ fn find_edges(input: &[Vec<char>], region: &HashSet<RegionNode>) -> HashSet<Edge
 fn find_corners(input: &[Vec<char>], region: &HashSet<RegionNode>) -> usize {
     let edges = find_edges(input, region);
     edges.iter().fold(0, |acc, edge| {
-        get_opposite_directions(&edge.direction).iter().fold(acc, |acc, direction| {
-            let change = direction_to_coordinates(direction);
-            let next_edge = Edge {
-                x: edge.x + change[0],
-                y: edge.y + change[1],
-                direction: edge.direction.clone()
-            };
+        get_opposite_directions(&edge.direction)
+            .iter()
+            .fold(acc, |acc, direction| {
+                let change = direction_to_coordinates(direction);
+                let next_edge = Edge {
+                    x: edge.x + change[0],
+                    y: edge.y + change[1],
+                    direction: edge.direction.clone(),
+                };
 
-            if edges.contains(&next_edge) {
-                acc
-            } else {
-                acc + 1
-            }
-        })
+                if edges.contains(&next_edge) {
+                    acc
+                } else {
+                    acc + 1
+                }
+            })
     })
 }
 
