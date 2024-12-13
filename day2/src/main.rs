@@ -1,7 +1,7 @@
 use parse_file::parse_file;
 
 fn main() {
-    let input = parse_file("input");
+    let input = parse_file("input.txt");
     println!("{}", solve_part_one(&input));
     println!("{}", solve_part_two(&input));
 }

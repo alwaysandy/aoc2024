@@ -2,7 +2,7 @@ use parse_file::get_full_file;
 use regex::Regex;
 
 fn main() {
-    let input = get_full_file("input");
+    let input = get_full_file("input.txt");
     println!("{}", solve_part_one(&input));
     println!("{}", solve_part_two(&input));
 }

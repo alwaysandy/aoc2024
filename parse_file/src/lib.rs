@@ -3,7 +3,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 pub fn parse_file(filename: &str) -> Vec<String> {
-    let path_name = format!("src/{filename}.txt");
+    let path_name = format!("src/{filename}");
     let path = Path::new(&path_name);
     let display = path.display();
 
@@ -33,7 +33,7 @@ pub fn parse_file(filename: &str) -> Vec<String> {
 }
 
 pub fn get_full_file(filename: &str) -> String {
-    let path_name = format!("src/{filename}.txt");
+    let path_name = format!("src/{filename}");
     let path = Path::new(&path_name);
     let display = path.display();
 

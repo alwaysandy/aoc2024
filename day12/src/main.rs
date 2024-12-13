@@ -4,7 +4,7 @@ mod part_one;
 mod part_two;
 
 fn main() {
-    let input: Vec<Vec<char>> = parse_file("input")
+    let input: Vec<Vec<char>> = parse_file("input.txt")
         .iter()
         .map(|line| line.chars().collect())
         .collect();

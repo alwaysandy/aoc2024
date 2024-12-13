@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 
 fn main() {
     println!("Hello, world!");
-    let input = parse_file("input_pt1");
+    let input = parse_file("input_pt1.txt");
 
     println!("{}", solve_part_one(&input));
     println!("{}", solve_part_two(&input));
