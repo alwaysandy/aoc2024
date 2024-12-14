@@ -1,5 +1,5 @@
-use regex::Regex;
 use parse_file::parse_file;
+use regex::Regex;
 use utils::*;
 
 mod part_one;
@@ -25,12 +25,12 @@ fn main() {
             Robot {
                 position: XY {
                     x: nums[0],
-                    y: nums[1]
+                    y: nums[1],
                 },
                 velocity: XY {
                     x: nums[2],
                     y: nums[3],
-                }
+                },
             }
         })
         .collect();

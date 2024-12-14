@@ -48,7 +48,7 @@ fn solve_part_two(input: &Vec<String>) -> usize {
     let mut similarity: usize = 0;
     for num in left_nums {
         if !right_nums.contains_key(&num) {
-            continue
+            continue;
         }
 
         similarity += num * right_nums[&num];

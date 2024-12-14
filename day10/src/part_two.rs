@@ -12,17 +12,26 @@ struct XY {
 }
 
 pub fn solve_part_two(input: &[String]) -> usize {
-    let input_nums: Vec<Vec<usize>> = input.iter().map(|line| {
-        line.chars().map(|c| c as usize - '0' as usize).collect()
-    }).collect();
+    let input_nums: Vec<Vec<usize>> = input
+        .iter()
+        .map(|line| line.chars().map(|c| c as usize - '0' as usize).collect())
+        .collect();
 
     input_nums.iter().enumerate().fold(0, |acc, (y, line)| {
         line.iter().enumerate().fold(acc, |acc, (x, elevation)| {
             if *elevation != 0 {
-                return acc
+                return acc;
             }
 
-            acc + check_path(&input_nums, XY { x: x as i32, y: y as i32 }, 0, 0)
+            acc + check_path(
+                &input_nums,
+                XY {
+                    x: x as i32,
+                    y: y as i32,
+                },
+                0,
+                0,
+            )
         })
     })
 }
@@ -32,10 +41,18 @@ fn check_path(map: &[Vec<usize>], pos: XY, elevation: usize, paths_found: usize)
         return paths_found + 1;
     }
 
-    let directions = [Direction::Up, Direction::Right, Direction::Down, Direction::Left];
+    let directions = [
+        Direction::Up,
+        Direction::Right,
+        Direction::Down,
+        Direction::Left,
+    ];
     directions.iter().fold(paths_found, |acc, d| {
         let change = direction_to_coordinates(d);
-        let next_pos = XY { x: pos.x + change[0], y: pos.y + change[1]};
+        let next_pos = XY {
+            x: pos.x + change[0],
+            y: pos.y + change[1],
+        };
         if next_pos.x < 0 || next_pos.x >= map[0].len() as i32 {
             return acc;
         }

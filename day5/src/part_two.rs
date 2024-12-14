@@ -51,7 +51,7 @@ pub fn solve_part_two(input: &[String]) -> usize {
     answer
 }
 
-fn sort_page(page: &mut Vec<usize>, rules: &HashMap<usize, HashSet<usize>>) -> Vec<usize>{
+fn sort_page(page: &mut Vec<usize>, rules: &HashMap<usize, HashSet<usize>>) -> Vec<usize> {
     page.sort_by(|a, b| {
         if let Some(rule) = rules.get(a) {
             if rule.contains(b) {

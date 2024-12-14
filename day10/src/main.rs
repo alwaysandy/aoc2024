@@ -1,5 +1,5 @@
-mod part_two;
 mod part_one;
+mod part_two;
 
 use parse_file::parse_file;
 
