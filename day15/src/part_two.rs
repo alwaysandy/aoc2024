@@ -99,7 +99,7 @@ fn move_robot(
                 return (next_pos, boxes);
             }
 
-            if let Some(new_boxes) = can_move_boxes(&next_pos, &direction, walls, &boxes) {
+            if let Some(new_boxes) = move_boxes(&next_pos, &direction, walls, &boxes) {
                 (next_pos, new_boxes)
             } else {
                 (robot, boxes)
@@ -108,7 +108,7 @@ fn move_robot(
         .1
 }
 
-fn can_move_boxes(
+fn move_boxes(
     pos: &XY,
     direction: &Direction,
     walls: &HashSet<XY>,
@@ -130,7 +130,7 @@ fn can_move_boxes(
                 y: pos.y + change[1],
             };
 
-            if let Some(mut moved_boxes) = can_move_boxes(&next_pos, direction, walls, boxes) {
+            if let Some(mut moved_boxes) = move_boxes(&next_pos, direction, walls, boxes) {
                 let side = moved_boxes.get(pos).unwrap().clone();
                 moved_boxes.remove(pos);
                 moved_boxes.insert(next_pos, side);
@@ -173,11 +173,11 @@ fn can_move_boxes(
                 y: pos_connected.y + change[1],
             };
 
-            if let Some(mut moved_boxes) = can_move_boxes(&next_pos, direction, walls, boxes) {
+            if let Some(mut moved_boxes) = move_boxes(&next_pos, direction, walls, boxes) {
                 moved_boxes.remove(pos);
                 moved_boxes.insert(next_pos.clone(), side.clone());
                 if let Some(mut moved_boxes) =
-                    can_move_boxes(&next_pos_connected, direction, walls, &moved_boxes)
+                    move_boxes(&next_pos_connected, direction, walls, &moved_boxes)
                 {
                     moved_boxes.remove(&pos_connected);
                     moved_boxes.insert(next_pos_connected.clone(), side_connected.clone());
