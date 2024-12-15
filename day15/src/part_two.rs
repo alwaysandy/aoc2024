@@ -52,8 +52,8 @@ pub fn solve(floor: &[Vec<char>], moves: &[char]) -> usize {
         }
     }).collect::<Vec<_>>()[0].clone();
 
-    move_robot(moves, &robot, &walls, &mut boxes);
-    boxes.iter().fold(0, |acc, box_pos| {
+    let moved_boxes = move_robot(moves, &robot, &walls, &mut boxes);
+    moved_boxes.iter().fold(0, |acc, box_pos| {
         if box_pos.1 == &Side::Left {
             acc + ((100*box_pos.0.y) + box_pos.0.x) as usize
         } else {
@@ -62,8 +62,8 @@ pub fn solve(floor: &[Vec<char>], moves: &[char]) -> usize {
     })
 }
 
-fn move_robot(moves: &[char], robot: &XY, walls: &HashSet<XY>, boxes: &mut HashMap<XY, Side>) {
-    moves.iter().fold(robot.clone(), |robot, c| {
+fn move_robot(moves: &[char], robot: &XY, walls: &HashSet<XY>, boxes: &mut HashMap<XY, Side>) -> HashMap<XY, Side> {
+    moves.iter().fold((robot.clone(), boxes.clone()), |(robot, boxes), c| {
         let direction = char_to_direction(c);
         let change = get_change(&direction);
         let next_pos = XY {
@@ -72,32 +72,31 @@ fn move_robot(moves: &[char], robot: &XY, walls: &HashSet<XY>, boxes: &mut HashM
         };
 
         if walls.contains(&next_pos) {
-            return robot;
+            return (robot, boxes);
         }
 
         if !boxes.contains_key(&next_pos) {
-            return next_pos;
+            return (next_pos, boxes);
         }
 
-        if can_move_boxes(&next_pos, &direction, walls, boxes) {
-            move_boxes(&next_pos, &direction, walls, boxes);
-            next_pos
+        if let Some(new_boxes) = can_move_boxes(&next_pos, &direction, walls, &boxes) {
+            (next_pos, new_boxes)
         } else {
-            robot
+            (robot, boxes)
         }
-    });
+    }).1
 }
 
 
-fn can_move_boxes(pos: &XY, direction: &Direction, walls: &HashSet<XY>, boxes: &mut HashMap<XY, Side>) -> bool {
+fn can_move_boxes(pos: &XY, direction: &Direction, walls: &HashSet<XY>, boxes: &HashMap<XY, Side>) -> Option<HashMap<XY, Side>> {
     match direction {
         Direction::Left | Direction::Right => {
             if walls.contains(pos) {
-                return false;
+                return None;
             }
 
             if !boxes.contains_key(pos) {
-                return true
+                return Some(boxes.clone())
             }
 
             let change = get_change(direction);
@@ -106,19 +105,22 @@ fn can_move_boxes(pos: &XY, direction: &Direction, walls: &HashSet<XY>, boxes: &
                 y: pos.y + change[1]
             };
 
-            if can_move_boxes(&next_pos, direction, walls, boxes) {
-                true
+            if let Some(mut moved_boxes) = can_move_boxes(&next_pos, direction, walls, boxes) {
+                let side = moved_boxes.get(pos).unwrap().clone();
+                moved_boxes.remove(pos);
+                moved_boxes.insert(next_pos, side);
+                Some(moved_boxes)
             } else {
-                false
+                None
             }
         },
         Direction::Down | Direction::Up => {
             if walls.contains(pos) {
-                return false;
+                return None;
             }
 
             if !boxes.contains_key(pos) {
-                return true;
+                return Some(boxes.clone());
             }
 
             let change = get_change(direction);
@@ -140,64 +142,19 @@ fn can_move_boxes(pos: &XY, direction: &Direction, walls: &HashSet<XY>, boxes: &
                 y: pos_connected.y + change[1]
             };
 
-            if can_move_boxes(&next_pos, direction, walls, boxes)  && can_move_boxes(&next_pos_connected, direction, walls, boxes){
-                true
+            if let Some(mut moved_boxes) = can_move_boxes(&next_pos, direction, walls, boxes) {
+                if let Some(mut moved_boxes) = can_move_boxes(&next_pos_connected, direction, walls, &mut moved_boxes) {
+                    moved_boxes.remove(&pos);
+                    moved_boxes.remove(&pos_connected);
+                    moved_boxes.insert(next_pos.clone(), side.clone());
+                    moved_boxes.insert(next_pos_connected.clone(), side_connected.clone());
+                    Some(moved_boxes)
+                } else {
+                    None
+                }
             } else {
-                false
+                None
             }
-        }
-    }
-}
-
-
-fn move_boxes(pos: &XY, direction: &Direction, walls: &HashSet<XY>, boxes: &mut HashMap<XY, Side>) {
-    match direction {
-        Direction::Left | Direction::Right => {
-            if !boxes.contains_key(pos) {
-                return;
-            }
-
-            let change = get_change(direction);
-            let next_pos = XY {
-                x: pos.x + change[0],
-                y: pos.y + change[1]
-            };
-
-            move_boxes(&next_pos, direction, walls, boxes);
-            let side = boxes.get(pos).unwrap().clone();
-            boxes.remove(pos);
-            boxes.insert(next_pos, side);
-        },
-        Direction::Down | Direction::Up => {
-            if !boxes.contains_key(pos) {
-                return;
-            }
-
-            let change = get_change(direction);
-            let next_pos = XY {
-                x: pos.x + change[0],
-                y: pos.y + change[1]
-            };
-
-            let side = boxes.get(&pos).unwrap().clone();
-            let side_connected = get_opposite_side(&side);
-            let pos_connected = if side_connected == Side::Left {
-                XY { x: pos.x - 1, y: pos.y }
-            } else {
-                XY { x: pos.x + 1, y: pos.y }
-            };
-
-            let next_pos_connected = XY {
-                x: pos_connected.x,
-                y: pos_connected.y + change[1]
-            };
-
-            move_boxes(&next_pos, direction, walls, boxes);
-            move_boxes(&next_pos_connected, direction, walls, boxes);
-            boxes.remove(&pos);
-            boxes.remove(&pos_connected);
-            boxes.insert(next_pos.clone(), side.clone());
-            boxes.insert(next_pos_connected.clone(), side_connected.clone());
         }
     }
 }
