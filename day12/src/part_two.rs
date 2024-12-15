@@ -47,8 +47,6 @@ pub fn solve_part_two(input: &[Vec<char>]) -> usize {
 
     regions.iter().fold(0, |acc, (c, region_vec)| {
         region_vec.iter().fold(acc, |acc, region| {
-            // acc + region.len() * find_perimeter(input, region)
-            println!("{}", find_corners(input, region) / 2);
             acc + (find_corners(input, region) / 2) * region.len()
         })
     })
@@ -87,24 +85,6 @@ fn flood_fill(input: &[Vec<char>], start: RegionNode) -> HashSet<RegionNode> {
             }
         }
     }
-}
-
-fn find_perimeter(input: &[Vec<char>], region: &HashSet<RegionNode>) -> usize {
-    let directions = [
-        Direction::Up,
-        Direction::Right,
-        Direction::Down,
-        Direction::Left,
-    ];
-    region.iter().fold(0, |acc, node| {
-        directions.iter().fold(acc, |acc, direction| {
-            if let Some(_) = is_valid_change(input, &node, direction) {
-                acc
-            } else {
-                acc + 1
-            }
-        })
-    })
 }
 
 fn find_edges(input: &[Vec<char>], region: &HashSet<RegionNode>) -> HashSet<Edge> {
