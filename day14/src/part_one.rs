@@ -26,7 +26,7 @@ pub fn solve_part_one(input: &[Robot]) -> usize {
         * count_quadrant(&robots, 0, width / 2 - 1, height / 2 + 1, height)
         * count_quadrant(&robots, width / 2 + 1, width, 0, height / 2 - 1);
 
-    return total;
+    total
 }
 
 fn count_quadrant(
