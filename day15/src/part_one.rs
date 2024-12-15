@@ -40,15 +40,10 @@ pub fn solve(floor: &[Vec<char>], moves: &[char]) -> usize {
         .iter()
         .enumerate()
         .filter_map(|(y, line)| {
-            let x = line.iter().position(|c| *c == '@');
-            if x.is_some() {
-                Some(XY {
-                    x: x.unwrap() as i32,
-                    y: y as i32,
-                })
-            } else {
-                None
-            }
+            line.iter().position(|c| *c == '@').map(|x| XY {
+                x: x as i32,
+                y: y as i32,
+            })
         })
         .collect::<Vec<_>>()[0]
         .clone();
@@ -102,7 +97,7 @@ fn move_boxes(
         y: pos.y + change[1],
     };
 
-    if boxes.contains(&pos) {
+    if boxes.contains(pos) {
         return move_boxes(&next_pos, direction, walls, boxes);
     }
 

@@ -1,5 +1,4 @@
 use std::collections::{HashMap, HashSet};
-use std::io;
 use utils::*;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -44,15 +43,10 @@ pub fn solve(floor: &[Vec<char>], moves: &[char]) -> usize {
         });
 
     let robot: XY = floor.iter().enumerate().filter_map(|(y, line)| {
-        let x = line.iter().position(|c| *c == '@');
-        if x.is_some() {
-            Some(XY {x: x.unwrap() as i32 * 2, y: y as i32})
-        } else {
-            None
-        }
+        line.iter().position(|c| *c == '@').map(|x| XY {x: x as i32 * 2, y: y as i32})
     }).collect::<Vec<_>>()[0].clone();
 
-    let moved_boxes = move_robot(moves, &robot, &walls, &mut boxes);
+    let moved_boxes = move_robot(moves, &robot, &walls, &boxes);
     moved_boxes.iter().fold(0, |acc, box_pos| {
         if box_pos.1 == &Side::Left {
             acc + ((100*box_pos.0.y) + box_pos.0.x) as usize
@@ -62,7 +56,7 @@ pub fn solve(floor: &[Vec<char>], moves: &[char]) -> usize {
     })
 }
 
-fn move_robot(moves: &[char], robot: &XY, walls: &HashSet<XY>, boxes: &mut HashMap<XY, Side>) -> HashMap<XY, Side> {
+fn move_robot(moves: &[char], robot: &XY, walls: &HashSet<XY>, boxes: &HashMap<XY, Side>) -> HashMap<XY, Side> {
     moves.iter().fold((robot.clone(), boxes.clone()), |(robot, boxes), c| {
         let direction = char_to_direction(c);
         let change = get_change(&direction);
@@ -86,7 +80,6 @@ fn move_robot(moves: &[char], robot: &XY, walls: &HashSet<XY>, boxes: &mut HashM
         }
     }).1
 }
-
 
 fn can_move_boxes(pos: &XY, direction: &Direction, walls: &HashSet<XY>, boxes: &HashMap<XY, Side>) -> Option<HashMap<XY, Side>> {
     match direction {
@@ -129,7 +122,7 @@ fn can_move_boxes(pos: &XY, direction: &Direction, walls: &HashSet<XY>, boxes: &
                 y: pos.y + change[1]
             };
 
-            let side = boxes.get(&pos).unwrap().clone();
+            let side = boxes.get(pos).unwrap().clone();
             let side_connected = get_opposite_side(&side);
             let pos_connected = if side_connected == Side::Left {
                 XY { x: pos.x - 1, y: pos.y }
@@ -143,10 +136,10 @@ fn can_move_boxes(pos: &XY, direction: &Direction, walls: &HashSet<XY>, boxes: &
             };
 
             if let Some(mut moved_boxes) = can_move_boxes(&next_pos, direction, walls, boxes) {
-                if let Some(mut moved_boxes) = can_move_boxes(&next_pos_connected, direction, walls, &mut moved_boxes) {
-                    moved_boxes.remove(&pos);
+                moved_boxes.remove(pos);
+                moved_boxes.insert(next_pos.clone(), side.clone());
+                if let Some(mut moved_boxes) = can_move_boxes(&next_pos_connected, direction, walls, &moved_boxes) {
                     moved_boxes.remove(&pos_connected);
-                    moved_boxes.insert(next_pos.clone(), side.clone());
                     moved_boxes.insert(next_pos_connected.clone(), side_connected.clone());
                     Some(moved_boxes)
                 } else {
@@ -173,34 +166,5 @@ fn get_opposite_side(side: &Side) -> Side {
     match side {
         Side::Left => Side::Right,
         Side::Right => Side::Left,
-    }
-}
-
-fn print_all(boxes: &HashMap<XY, Side>, walls: &HashSet<XY>, robot: &XY) {
-    let width: usize = walls.iter().map(|c| c.x).max().unwrap() as usize;
-    let height: usize = walls.iter().map(|c| c.y).max().unwrap() as usize;
-    let mut view: Vec<Vec<char>> = vec![vec!['.'; width as usize + 1]; height as usize + 1];
-    for y in 0..=height {
-        for x in 0..=width {
-            if walls.contains(&XY { x: x as i32, y: y as i32 }) {
-                view[y][x] = '#';
-            }
-
-            if boxes.contains_key(&XY { x: x as i32, y: y as i32 }) {
-                if boxes.get(&XY { x: x as i32, y: y as i32}).unwrap() == &Side::Left {
-                    view[y][x] = '[';
-                } else {
-                    view[y][x] = ']';
-                }
-            }
-
-            if x == robot.x as usize && y == robot.y as usize {
-                view[y][x] = '@';
-            }
-        }
-    }
-
-    for line in view {
-        println!("{}", line.iter().collect::<String>());
     }
 }
