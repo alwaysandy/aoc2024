@@ -112,9 +112,9 @@ pub fn solve(input: &[Vec<char>]) {
         &mut failed_at,
     ) {
         println!("{:?}", path.len());
+        print_all(input, &path);
     }
 
-    // print_all(input, &correct_path);
 }
 
 fn dfs(
@@ -200,10 +200,10 @@ fn dfs(
 fn print_all(input: &[Vec<char>], valid_squares: &HashSet<XY>) {
     let mut editable = input.to_owned();
     valid_squares.iter().for_each(|s| {
-        editable[s.y as usize][s.x as usize] = '$';
+        editable[s.y as usize][s.x as usize] = 'O';
     });
 
     editable
         .iter()
-        .for_each(|s| println!("{}", s.iter().collect::<String>()))
+        .for_each(|s| println!("{}", s.iter().map(|c| if *c == '.' {' '} else {*c}).collect::<String>()))
 }
