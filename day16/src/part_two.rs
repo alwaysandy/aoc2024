@@ -31,12 +31,6 @@ pub fn solve(input: &[Vec<char>]) {
     scores.insert(start.clone(), 0);
     queue.push_front((start.clone(), Direction::Right, 0));
 
-    let directions = [
-        Direction::Up,
-        Direction::Down,
-        Direction::Left,
-        Direction::Right,
-    ];
     while !queue.is_empty() {
         let (curr, dir, score) = queue.pop_front().unwrap();
 
@@ -50,7 +44,7 @@ pub fn solve(input: &[Vec<char>]) {
             scores.insert(curr.clone(), score);
         }
 
-        directions.iter().for_each(|direction| {
+        DIRECTIONS.iter().for_each(|direction| {
             let new_score = if direction == &dir {
                 score + 1
             } else if direction == &get_opposite_direction(&dir) {
@@ -139,11 +133,10 @@ fn dfs(
         return Some(correct_path.clone());
     }
 
-    let directions = get_all_directions();
     path.insert(loc.clone());
 
     let mut is_valid = false;
-    directions.iter().for_each(|next_dir| {
+    DIRECTIONS.iter().for_each(|next_dir| {
         let new_score = if dir == next_dir {
             score + 1
         } else if &get_opposite_direction(dir) == next_dir {

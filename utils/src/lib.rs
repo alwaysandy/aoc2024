@@ -12,6 +12,8 @@ pub enum Direction {
     Right,
 }
 
+pub const DIRECTIONS: [Direction; 4] = [Direction::Up, Direction::Down, Direction::Left, Direction::Right];
+
 pub fn get_change(direction: &Direction) -> [i32; 2] {
     match direction {
         Direction::Up => [0, -1],
@@ -28,8 +30,4 @@ pub fn get_opposite_direction(direction: &Direction) -> Direction {
         Direction::Down => Direction::Up,
         Direction::Left => Direction::Right,
     }
-}
-
-pub fn get_all_directions() -> [Direction; 4] {
-    [Direction::Up, Direction::Down, Direction::Left, Direction::Right]
 }
