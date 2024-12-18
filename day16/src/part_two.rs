@@ -108,7 +108,6 @@ pub fn solve(input: &[Vec<char>]) {
         println!("{:?}", path.len());
         print_all(input, &path);
     }
-
 }
 
 fn dfs(
@@ -196,7 +195,12 @@ fn print_all(input: &[Vec<char>], valid_squares: &HashSet<XY>) {
         editable[s.y as usize][s.x as usize] = 'O';
     });
 
-    editable
-        .iter()
-        .for_each(|s| println!("{}", s.iter().map(|c| if *c == '.' {' '} else {*c}).collect::<String>()))
+    editable.iter().for_each(|s| {
+        println!(
+            "{}",
+            s.iter()
+                .map(|c| if *c == '.' { ' ' } else { *c })
+                .collect::<String>()
+        )
+    })
 }
