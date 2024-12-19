@@ -4,8 +4,7 @@ pub fn solve(input: &[String]) {
     let patterns: HashSet<String> = input[0].split(", ").map(|p| p.to_string()).collect();
 
     let answer = input[2..].iter().fold(0, |acc, s| {
-        let mut succeeded: HashMap<(usize, String), usize> = HashMap::new();
-        acc + count_possibilities(s, &patterns, &mut succeeded)
+        acc + count_possibilities(s, &patterns, &mut HashMap::new())
     });
 
     println!("{}", answer);
@@ -20,31 +19,26 @@ fn count_possibilities(
         return 1;
     }
 
-    let mut count = 0;
-    let mut i = if towel.len() > 8 { 8 } else { towel.len() };
-    loop {
-        if i == 0 {
-            return count;
+    (1..=8).rev().fold(0, |acc, i| {
+        if i > towel.len() {
+            return acc;
         }
 
         if patterns.contains(&towel[0..i]) {
             let tobenamed = &towel[i..];
             if let Some(answer) = succeeded.get(&(i, tobenamed.to_string())) {
-                count += answer;
-                i -= 1;
-                continue;
+                return acc + answer
             }
 
-            let answer = count_possibilities(&tobenamed, patterns, succeeded);
+            let answer = count_possibilities(tobenamed, patterns, succeeded);
             if answer == 0 {
-                i -= 1;
-                continue;
+                return acc;
             }
 
             succeeded.insert((i, tobenamed.to_string()), answer);
-            count += answer;
+            acc + answer
+        } else {
+            acc
         }
-
-        i -= 1
-    }
+    })
 }
