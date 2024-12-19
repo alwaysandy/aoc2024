@@ -5,6 +5,6 @@ use parse_file::parse_file;
 
 fn main() {
     let input = parse_file("input.txt");
-    part_one::solve(&input);
-    part_two::solve(&input);
+    println!("{}", part_one::solve(&input));
+    println!("{}", part_two::solve(&input));
 }

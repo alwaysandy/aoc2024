@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub fn solve(input: &[String]) {
+pub fn solve(input: &[String]) -> usize {
     let mut patterns: Vec<Vec<String>> = Vec::new();
     for i in 0..9 {
         patterns.push(Vec::new());
@@ -10,16 +10,14 @@ pub fn solve(input: &[String]) {
         patterns[p.len()].push(p.to_string());
     });
 
-    let answer = input[2..].iter().fold(0, |acc, s| {
+    input[2..].iter().fold(0, |acc, s| {
         let mut failed: HashSet<String> = HashSet::new();
         if is_possible(s.to_string(), &patterns, &mut failed) {
             acc + 1
         } else {
             acc
         }
-    });
-
-    println!("{}", answer);
+    })
 }
 
 fn is_possible(towel: String, patterns: &Vec<Vec<String>>, failed: &mut HashSet<String>) -> bool {
