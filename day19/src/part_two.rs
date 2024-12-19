@@ -11,7 +11,7 @@ pub fn solve(input: &[String]) {
     });
 
     let answer = input[2..].iter().fold(0, |acc, s| {
-        let mut failed: HashSet<(usize, String)> = HashSet::new();
+        let mut failed: HashSet<String> = HashSet::new();
         if is_possible(s.to_string(), 0, &patterns, &mut failed) {
             acc + 1
         } else {
@@ -22,7 +22,7 @@ pub fn solve(input: &[String]) {
     println!("{}", answer);
 }
 
-fn is_possible(towel: String, pos: usize, patterns: &Vec<Vec<String>>, failed: &mut HashSet<(usize, String)>) -> bool {
+fn is_possible(towel: String, pos: usize, patterns: &Vec<Vec<String>>, failed: &mut HashSet<String>) -> bool {
     if towel.len() == 0 {
         return true;
     }
@@ -40,12 +40,12 @@ fn is_possible(towel: String, pos: usize, patterns: &Vec<Vec<String>>, failed: &
                 }
 
                 let tobenamed = towel[i..].to_string();
-                if failed.contains(&(0, tobenamed.clone())) {
+                if failed.contains(&tobenamed) {
                     return false;
                 }
 
                 if !is_possible(tobenamed.clone(), i, patterns, failed) {
-                    failed.insert((0, tobenamed.clone()));
+                    failed.insert(tobenamed);
                     return false;
                 }
 
