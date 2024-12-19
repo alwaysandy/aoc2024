@@ -11,51 +11,46 @@ pub fn solve(input: &[String]) {
     });
 
     let answer = input[2..].iter().fold(0, |acc, s| {
+        println!("First!");
         let mut failed: HashSet<String> = HashSet::new();
-        if is_possible(s.to_string(), 0, &patterns, &mut failed) {
-            acc + 1
-        } else {
-            acc
-        }
+        acc + is_possible(s.to_string(), &patterns, &mut failed)
     });
 
     println!("{}", answer);
 }
 
-fn is_possible(towel: String, pos: usize, patterns: &Vec<Vec<String>>, failed: &mut HashSet<String>) -> bool {
+fn is_possible(towel: String, patterns: &Vec<Vec<String>>, failed: &mut HashSet<String>) -> usize {
     if towel.len() == 0 {
-        return true;
+        return 1;
     }
 
+    let mut count = 0;
     let mut i = if towel.len() > 8 { 8 } else { towel.len() };
     loop {
         if i == 0 {
-            return false;
+            return count;
         }
 
-        if patterns[i].iter().any(|p| {
+        patterns[i].iter().for_each(|p| {
             if let Some(offset) = towel.find(p) {
                 if offset != 0 {
-                    return false;
+                    return;
                 }
 
                 let tobenamed = towel[i..].to_string();
                 if failed.contains(&tobenamed) {
-                    return false;
+                    return;
                 }
 
-                if !is_possible(tobenamed.clone(), i, patterns, failed) {
+                let answer= is_possible(tobenamed.clone(), patterns, failed);
+                if answer == 0 {
                     failed.insert(tobenamed);
-                    return false;
+                    return;
                 }
 
-                true
-            } else {
-                false
+                count += answer;
             }
-        }) {
-            return true;
-        }
+        });
 
         i -= 1
     }
