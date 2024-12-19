@@ -60,7 +60,7 @@ fn print_corrupted(corrupted: &HashSet<XY>, max: i32) {
     for y in 0..max {
         let mut line = ['.'; 70];
         for x in 0..max {
-            if corrupted.contains(&XY { x: x, y: y }) {
+            if corrupted.contains(&XY { x, y }) {
                 line[x as usize] = '#';
             }
         }
