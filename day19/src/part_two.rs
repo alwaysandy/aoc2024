@@ -1,25 +1,19 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 pub fn solve(input: &[String]) {
-    let mut patterns: Vec<Vec<String>> = Vec::new();
-    for i in 0..9 {
-        patterns.push(Vec::new());
-    }
-
-    input[0].split(", ").for_each(|p| {
-        patterns[p.len()].push(p.to_string());
-    });
+    let patterns: HashSet<String> = input[0].split(", ").map(|p| {
+        p.to_string()
+    }).collect();
 
     let answer = input[2..].iter().fold(0, |acc, s| {
-        println!("First!");
-        let mut failed: HashSet<String> = HashSet::new();
-        acc + is_possible(s.to_string(), &patterns, &mut failed)
+        let mut succeeded: HashMap<(usize, String), usize> = HashMap::new();
+        acc + count_possibilities(s, &patterns, &mut succeeded)
     });
 
     println!("{}", answer);
 }
 
-fn is_possible(towel: String, patterns: &Vec<Vec<String>>, failed: &mut HashSet<String>) -> usize {
+fn count_possibilities(towel: &str, patterns: &HashSet<String>, succeeded: &mut HashMap<(usize, String), usize>) -> usize {
     if towel.len() == 0 {
         return 1;
     }
@@ -31,26 +25,23 @@ fn is_possible(towel: String, patterns: &Vec<Vec<String>>, failed: &mut HashSet<
             return count;
         }
 
-        patterns[i].iter().for_each(|p| {
-            if let Some(offset) = towel.find(p) {
-                if offset != 0 {
-                    return;
-                }
-
-                let tobenamed = towel[i..].to_string();
-                if failed.contains(&tobenamed) {
-                    return;
-                }
-
-                let answer= is_possible(tobenamed.clone(), patterns, failed);
-                if answer == 0 {
-                    failed.insert(tobenamed);
-                    return;
-                }
-
-                count += answer;
+        if patterns.contains(&towel[0..i]) {
+            let tobenamed = &towel[i..];
+            if succeeded.contains_key(&(i, tobenamed.to_string())) {
+                count += succeeded.get(&(i, tobenamed.to_string())).unwrap();
+                i -= 1;
+                continue;
             }
-        });
+
+            let answer= count_possibilities(&tobenamed, patterns, succeeded);
+            if answer == 0 {
+                i -= 1;
+                continue;
+            }
+
+            succeeded.insert((i, tobenamed.to_string()), answer);
+            count += answer;
+        }
 
         i -= 1
     }
